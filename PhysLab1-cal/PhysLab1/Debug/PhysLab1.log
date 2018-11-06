@@ -1,2 +1,3 @@
 ﻿  Main.cpp
-  PhysLab1.vcxproj -> C:\Users\c00218721\Desktop\PhysLab1\Debug\PhysLab1.exe
+c:\users\c00218721\desktop\physlab1\physlab1-cal\physlab1\main.cpp(37): warning C4305: 'argument': truncation from 'double' to 'float'
+  PhysLab1.vcxproj -> C:\Users\c00218721\Desktop\PhysLab1\PhysLab1-cal\Debug\PhysLab1.exe
