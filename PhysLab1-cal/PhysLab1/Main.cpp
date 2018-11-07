@@ -25,7 +25,7 @@ int main()
 
 	sf::RenderWindow window(sf::VideoMode(800, 800), "Go Physics!!");
 
-	sf::CircleShape shape(2.5f);
+	sf::CircleShape shape(.5f);
 	sf::RectangleShape ground(sf::Vector2f(800,800));
 
 
@@ -36,6 +36,7 @@ int main()
 	sf::Vector2f position(400, 400);
 	sf::Vector2f gPos(0, 605.8);
 	sf::Time deltaTime;
+	sf::Text predictedTime;
 
 	sf::Vector2f gravity(0.0f, 9.8f);
 
@@ -47,6 +48,7 @@ int main()
 	const float FPS = 60.0f;
 	const sf::Time timePerFrame = sf::seconds(1.0f / 60.0f);
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
+	float time = 1.0f / 60.0f;
 
 	clock.restart();
 
@@ -73,28 +75,23 @@ int main()
 			window.clear();
 
 			// update position and velocity here using equations in lab sheet using timeChange as  timeSinceLastUpdate.asSeconds().
-
-
-			/*position = position + velocity * deltaTime.asSeconds() = 0.5f * gravity * (deltaTime.asSeconds() * deltaTime.asSeconds());
-			velocity = velocity + gravity * deltaTime.asSeconds();*/
 			
-			if (!onGround)
+			if (position.y <= 606)
 			{
-				position = position + gravity;
-				if (position.y >= 605.5)
-				{
-					onGround = true;
-				}
-			}
-
-			if (onGround && sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-			{
-				velocity.y -= 23.0f;
-				onGround = false;
+				onGround = true;
+				position = position + velocity * time + 0.5f * gravity*(time * time);
+				velocity = velocity + gravity * time;
 				
 			}
-			
 
+ 			if (position.y >= 606 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+			{
+				velocity.y -= 23.0f;
+				position = position + velocity * time + 0.5f * gravity*(time * time);
+				velocity = velocity + gravity * time;
+				onGround = false;
+				std::cout << "YUP" << std::endl;
+			}
 
 			std::cout << position.y << std::endl;
 			std::cout << gPos.y << std::endl;
