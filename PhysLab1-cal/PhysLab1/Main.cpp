@@ -21,7 +21,7 @@
 
 int main()
 {
-	bool onGround = false;
+	bool spacePressed = false;
 
 	sf::RenderWindow window(sf::VideoMode(800, 800), "Go Physics!!");
 
@@ -35,13 +35,20 @@ int main()
 	sf::Vector2f velocity(0, 0);
 	sf::Vector2f position(400, 400);
 	sf::Vector2f gPos(0, 605.8);
-	sf::Time deltaTime;
-	sf::Text predictedTime;
+	
 
 	sf::Vector2f gravity(0.0f, 9.8f);
 
 	sf::Vector2f impulse(0.0f, 20.0f);
 
+	
+
+	sf::Text maxHeightText;
+	sf::Text predictedTime;
+	sf::Font m_font;
+
+	
+	
 
 	sf::Clock clock;
 
@@ -54,7 +61,10 @@ int main()
 
 	while (window.isOpen())
 	{
-
+		if (!m_font.loadFromFile("ariblk.ttf"))
+		{
+			std::cout << "error loading font" << std::endl;
+		}
 		//read keyboard inout
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -76,26 +86,53 @@ int main()
 
 			// update position and velocity here using equations in lab sheet using timeChange as  timeSinceLastUpdate.asSeconds().
 			
-			if (position.y <= 606)
+			position = position + velocity * time + 0.5f * gravity*(time * time);
+			velocity = velocity + gravity * time;
+
+			if (position.y > 605)
 			{
-				onGround = true;
-				position = position + velocity * time + 0.5f * gravity*(time * time);
-				velocity = velocity + gravity * time;
-				
+				velocity.y = 0;
+				position.y = 605;
 			}
 
- 			if (position.y >= 606 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && position.y > 604 && spacePressed == false)
 			{
-				velocity.y -= 23.0f;
-				position = position + velocity * time + 0.5f * gravity*(time * time);
-				velocity = velocity + gravity * time;
-				onGround = false;
-				std::cout << "YUP" << std::endl;
+
+				velocity.y = -26;
+				spacePressed = true;
 			}
 
-			std::cout << position.y << std::endl;
-			std::cout << gPos.y << std::endl;
-			std::cout << onGround << std::endl;
+			//to stop the spamming of space to make it look like its bouncing
+			if(spacePressed == true)
+			{
+				if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+				{
+					spacePressed = false;
+				}
+			}
+
+
+
+			float seconds = (2 * 26) / (9.8);
+			
+
+			float maxHeight = (26 * 26) / (2 * 9.8);
+
+			predictedTime.setPosition(0, 0);
+			predictedTime.setFont(m_font);
+			predictedTime.setCharacterSize(15);
+			predictedTime.setFillColor(sf::Color::White);
+			predictedTime.setString(std::to_string(seconds));
+
+			maxHeightText.setPosition(0, 40);
+			maxHeightText.setFont(m_font);
+			maxHeightText.setCharacterSize(15);
+			maxHeightText.setFillColor(sf::Color::White);
+			maxHeightText.setString(std::to_string(maxHeight));
+
+		
+
+ 		
 			
 
 
@@ -103,9 +140,14 @@ int main()
 			shape.setPosition(position);
 			ground.setPosition(gPos);
 
+			
 			window.draw(ground);
 			window.draw(shape);
-			
+			window.draw(predictedTime);
+			window.draw(maxHeightText);
+
+
+
 
 			window.display();
 			timeSinceLastUpdate = sf::Time::Zero;
